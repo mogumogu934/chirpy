@@ -1,0 +1,15 @@
+POST http://localhost:8080/api/validate_chirp
+Content-Type: application/json
+
+{
+  "body": "This is a test chirp"
+}
+
+###
+
+POST http://localhost:8080/api/validate_chirp
+Content-Type: application/json
+
+{
+  "body": "This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. "
+}
