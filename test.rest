@@ -4,36 +4,39 @@ GET http://localhost:8080/app
 ### Test healthz
 GET http://localhost:8080/api/healthz
 
-### Validate length
-POST http://localhost:8080/api/validate_chirp
-Content-Type: application/json
-
-{
-  "body": "This is a test chirp"
-}
-
-### Validate length (too long)
-POST http://localhost:8080/api/validate_chirp
-Content-Type: application/json
-
-{
-  "body": "This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp."
-}
-
-### Test word filter
-POST http://localhost:8080/api/validate_chirp
-Content-Type: application/json
-
-{
-  "body": "This is a kerfuffle opinion I need to share with the sharbert world."
-}
-
 ### Test create user
 POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
   "email": "test@yahoo.com"
+}
+
+### Create chirp
+POST http://localhost:8080/api/chirps
+Content-Type: application/json
+
+{
+  "body": "This is a test chirp",
+  "user_id": "015d79d8-da2c-4fae-8db4-f5f5ab14f3ae"
+}
+
+### Create chirp (too long)
+POST http://localhost:8080/api/chirps
+Content-Type: application/json
+
+{
+  "body": "This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp.",
+  "user_id": "015d79d8-da2c-4fae-8db4-f5f5ab14f3ae"
+}
+
+### Test word filter
+POST http://localhost:8080/api/chirps
+Content-Type: application/json
+
+{
+  "body": "This is a kerfuffle opinion I need to share with the sharbert world.",
+  "user_id": "015d79d8-da2c-4fae-8db4-f5f5ab14f3ae"
 }
 
 ### Test reset
