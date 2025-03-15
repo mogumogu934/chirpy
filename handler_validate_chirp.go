@@ -49,7 +49,7 @@ func filterMsg(msg string) string {
 	split := strings.Split(msg, " ")
 	for i, word := range split {
 		lowercaseWord := strings.ToLower(word)
-		if blockedWords[lowercaseWord] {
+		if _, exists := blockedWords[lowercaseWord]; exists {
 			split[i] = "****"
 		}
 	}
