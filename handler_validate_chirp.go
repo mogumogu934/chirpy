@@ -40,16 +40,21 @@ func respondWithError(w http.ResponseWriter, code int, msg string) {
 }
 
 func filterMsg(msg string) string {
-	lower := strings.ToLower(msg)
-	split := strings.Split(lower, " ")
-	originalSplit := strings.Split(msg, " ")
-	for i := range split {
-		if split[i] == "kerfuffle" || split[i] == "sharbert" || split[i] == "fornax" {
-			originalSplit[i] = "****"
+	blockedWords := map[string]bool{
+		"kerfuffle": true,
+		"sharbert":  true,
+		"fornax":    true,
+	}
+
+	split := strings.Split(msg, " ")
+	for i, word := range split {
+		lowercaseWord := strings.ToLower(word)
+		if blockedWords[lowercaseWord] {
+			split[i] = "****"
 		}
 	}
 
-	return strings.Join(originalSplit, " ")
+	return strings.Join(split, " ")
 }
 
 func validateChirpHandler(w http.ResponseWriter, r *http.Request) {
