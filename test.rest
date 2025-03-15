@@ -1,3 +1,4 @@
+// Validate length
 POST http://localhost:8080/api/validate_chirp
 Content-Type: application/json
 
@@ -5,11 +6,27 @@ Content-Type: application/json
   "body": "This is a test chirp"
 }
 
-###
+### Validate length (too long)
 
 POST http://localhost:8080/api/validate_chirp
 Content-Type: application/json
 
 {
-  "body": "This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. "
+  "body": "This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp."
 }
+
+### Test word filter
+POST http://localhost:8080/api/validate_chirp
+Content-Type: application/json
+
+{
+  "body": "This is a kerfuffle opinion I need to share with the sharbert world."
+}
+
+###
+
+GET http://localhost:8080/admin/metrics
+
+###
+
+POST http://localhost:8080/admin/reset
