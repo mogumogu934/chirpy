@@ -42,7 +42,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		Email:     user.Email,
 	}
 
-	respondWithJSON(w, 201, newUser)
+	respondWithJSON(w, http.StatusCreated, newUser)
 }
 
 func (cfg *apiConfig) resetHandler(w http.ResponseWriter, r *http.Request) {
