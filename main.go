@@ -52,7 +52,7 @@ func main() {
 	mux.HandleFunc("POST /api/users", apiCfg.createUserHandler)
 	mux.HandleFunc("POST /api/validate_chirp", validateChirpHandler)
 	mux.HandleFunc("GET /admin/metrics", apiCfg.metricsHandler)
-	mux.HandleFunc("POST /admin/reset-hits", apiCfg.resetMetricsHandler)
+	mux.HandleFunc("POST /admin/reset-metrics", apiCfg.resetMetricsHandler)
 	mux.HandleFunc("POST /admin/reset", apiCfg.resetHandler)
 
 	port := "8080"
