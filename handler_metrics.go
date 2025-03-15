@@ -21,7 +21,7 @@ func (cfg *apiConfig) middlewareMetricsInc(next http.Handler) http.Handler {
 
 func (cfg *apiConfig) metricsHandler(w http.ResponseWriter, r *http.Request) {
 	if cfg.platform != "dev" {
-		respondWithError(w, 403, "Forbidden: metrics only available in dev environment")
+		respondWithError(w, http.StatusForbidden, "Forbidden: metrics only available in dev environment")
 		return
 	}
 
@@ -33,7 +33,7 @@ func (cfg *apiConfig) metricsHandler(w http.ResponseWriter, r *http.Request) {
 
 func (cfg *apiConfig) resetMetricsHandler(w http.ResponseWriter, r *http.Request) {
 	if cfg.platform != "dev" {
-		respondWithError(w, 403, "Forbidden: reset metrics only available in dev environment")
+		respondWithError(w, http.StatusForbidden, "Forbidden: reset metrics only available in dev environment")
 		return
 	}
 
