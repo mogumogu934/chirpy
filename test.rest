@@ -1,4 +1,10 @@
-// Validate length
+### Test app
+GET http://localhost:8080/app
+
+### Test healthz
+GET http://localhost:8080/api/healthz
+
+### Validate length
 POST http://localhost:8080/api/validate_chirp
 Content-Type: application/json
 
@@ -7,7 +13,6 @@ Content-Type: application/json
 }
 
 ### Validate length (too long)
-
 POST http://localhost:8080/api/validate_chirp
 Content-Type: application/json
 
@@ -23,10 +28,19 @@ Content-Type: application/json
   "body": "This is a kerfuffle opinion I need to share with the sharbert world."
 }
 
-###
+### Test create user
+POST http://localhost:8080/api/users
+Content-Type: application/json
 
+{
+  "email": "test@yahoo.com"
+}
+
+### Test reset
+POST http://localhost:8080/admin/reset
+
+### Test metrics
 GET http://localhost:8080/admin/metrics
 
-###
-
-POST http://localhost:8080/admin/reset
+### Test reset hit count
+POST http://localhost:8080/admin/reset-hits
