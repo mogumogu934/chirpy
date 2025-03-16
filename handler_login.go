@@ -28,11 +28,11 @@ func (cfg *apiConfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := cfg.db.GetUserByEmail(r.Context(), params.Email)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, fmt.Sprintf("error getting user by email: %v", err))
+		respondWithError(w, http.StatusUnauthorized, "Incorrect email or password")
 		return
 	}
 
-	if err := auth.CheckPasswordHash(user.HashedPassword, params.Password); err != nil {
+	if err := auth.CheckPasswordHash(params.Password, user.HashedPassword); err != nil {
 		respondWithError(w, http.StatusUnauthorized, "Incorrect email or password")
 		return
 	}
