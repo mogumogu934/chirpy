@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -9,6 +10,36 @@ import (
 	"github.com/google/uuid"
 	"github.com/mogumogu934/chirpy/internal/database"
 )
+
+func (cfg *apiConfig) getChirpsHandler(w http.ResponseWriter, r *http.Request) {
+	chirps, err := cfg.db.GetChirps(r.Context())
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error getting chirps: %v", err))
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, chirps)
+}
+
+func (cfg *apiConfig) getChirpByIDHandler(w http.ResponseWriter, r *http.Request) {
+	chirpID, err := uuid.Parse(r.PathValue("chirpID"))
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error decoding chirpID string into UUID: %v", err))
+		return
+	}
+
+	chirp, err := cfg.db.GetChirpByID(r.Context(), chirpID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			respondWithError(w, http.StatusNotFound, fmt.Sprintf("chirp with chirpID %v does not exist", chirpID))
+			return
+		}
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error getting chirp by chirpID: %v", err))
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, chirp)
+}
 
 func filterMsg(msg string) string {
 	blockedWords := map[string]bool{
@@ -28,7 +59,7 @@ func filterMsg(msg string) string {
 	return strings.Join(split, " ")
 }
 
-func (cfg *apiConfig) chirpsHandler(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) createChirpHandler(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Body   string    `json:"body"`
 		UserID uuid.UUID `json:"user_id"`

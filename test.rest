@@ -18,7 +18,7 @@ Content-Type: application/json
 
 {
   "body": "This is a test chirp",
-  "user_id": "015d79d8-da2c-4fae-8db4-f5f5ab14f3ae"
+  "user_id": "6a49c2b7-0d6a-4506-9a66-845fe78bebca"
 }
 
 ### Create chirp (too long)
@@ -27,7 +27,7 @@ Content-Type: application/json
 
 {
   "body": "This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp.",
-  "user_id": "015d79d8-da2c-4fae-8db4-f5f5ab14f3ae"
+  "user_id": "6a49c2b7-0d6a-4506-9a66-845fe78bebca"
 }
 
 ### Test word filter
@@ -36,8 +36,14 @@ Content-Type: application/json
 
 {
   "body": "This is a kerfuffle opinion I need to share with the sharbert world.",
-  "user_id": "015d79d8-da2c-4fae-8db4-f5f5ab14f3ae"
+  "user_id": "6a49c2b7-0d6a-4506-9a66-845fe78bebca"
 }
+
+### Test get chirps
+GET http://localhost:8080/api/chirps
+
+### Test get chirp by ID
+GET http://localhost:8080/api/chirps/f7c658ff-6609-4359-8c0b-9c2f0c8dd5eb
 
 ### Test reset
 POST http://localhost:8080/admin/reset
