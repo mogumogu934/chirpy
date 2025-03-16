@@ -9,7 +9,16 @@ POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "email": "test@yahoo.com"
+  "email": "test@yahoo.com",
+  "password": "0123456789"
+}
+
+### Test login
+POST http://localhost:8080/api/login
+
+{
+  "email": "test@yahoo.com",
+  "password": "0123456789"
 }
 
 ### Create chirp
@@ -18,7 +27,7 @@ Content-Type: application/json
 
 {
   "body": "This is a test chirp",
-  "user_id": "6a49c2b7-0d6a-4506-9a66-845fe78bebca"
+  "user_id": "6c83e029-e8d9-4b67-b8c8-d7fcacb39a72"
 }
 
 ### Create chirp (too long)
@@ -27,7 +36,7 @@ Content-Type: application/json
 
 {
   "body": "This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp.",
-  "user_id": "6a49c2b7-0d6a-4506-9a66-845fe78bebca"
+  "user_id": "6c83e029-e8d9-4b67-b8c8-d7fcacb39a72"
 }
 
 ### Test word filter
@@ -36,14 +45,14 @@ Content-Type: application/json
 
 {
   "body": "This is a kerfuffle opinion I need to share with the sharbert world.",
-  "user_id": "6a49c2b7-0d6a-4506-9a66-845fe78bebca"
+  "user_id": "6c83e029-e8d9-4b67-b8c8-d7fcacb39a72"
 }
 
 ### Test get chirps
 GET http://localhost:8080/api/chirps
 
 ### Test get chirp by ID
-GET http://localhost:8080/api/chirps/f7c658ff-6609-4359-8c0b-9c2f0c8dd5eb
+GET http://localhost:8080/api/chirps/d624081b-6b98-4758-af6f-0ef63511590c
 
 ### Test reset
 POST http://localhost:8080/admin/reset

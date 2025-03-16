@@ -6,23 +6,31 @@ import (
 	"net/http"
 
 	"github.com/lib/pq"
+	"github.com/mogumogu934/chirpy/internal/auth"
+	"github.com/mogumogu934/chirpy/internal/database"
 )
 
 func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {
-		Email string `json:"email"`
-	}
-
 	decoder := json.NewDecoder(r.Body)
 	params := parameters{}
 	err := decoder.Decode(&params)
-
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error decoding body: %v", err))
 		return
 	}
 
-	user, err := cfg.db.CreateUser(r.Context(), params.Email)
+	hashedPassword, err := auth.HashPassword(params.Password)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error hashing password: %v", err))
+		return
+	}
+
+	userParams := database.CreateUserParams{
+		Email:          params.Email,
+		HashedPassword: hashedPassword,
+	}
+
+	user, err := cfg.db.CreateUser(r.Context(), userParams)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			if pqErr.Code == "23505" {
@@ -40,13 +48,14 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 		Email:     user.Email,
+		Password:  user.HashedPassword,
 	}
 
 	respondWithJSON(w, http.StatusCreated, newUser)
 }
 
 func (cfg *apiConfig) resetHandler(w http.ResponseWriter, r *http.Request) {
-	if cfg.platform != "dev" {
+	if !cfg.isDev() {
 		respondWithError(w, http.StatusForbidden, "Forbidden: reset only available in dev environment")
 		return
 	}
