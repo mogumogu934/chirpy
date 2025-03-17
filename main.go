@@ -17,12 +17,8 @@ import (
 type apiConfig struct {
 	db             *database.Queries
 	platform       string
+	jwtSecret      string
 	fileServerHits atomic.Int32
-}
-
-type userReq struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
 }
 
 type User struct {
@@ -31,13 +27,6 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	Email     string    `json:"email"`
 	Password  string    `json:"hashed_password"`
-}
-
-type cleanUser struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Email     string    `json:"email"`
 }
 
 type Chirp struct {
@@ -61,8 +50,9 @@ func main() {
 	dbQueries := database.New(db)
 
 	apiCfg := apiConfig{
-		db:       dbQueries,
-		platform: os.Getenv("PLATFORM"),
+		db:        dbQueries,
+		platform:  os.Getenv("PLATFORM"),
+		jwtSecret: os.Getenv("SECRET"),
 	}
 
 	mux := http.NewServeMux()
@@ -77,7 +67,7 @@ func main() {
 	mux.HandleFunc("POST /api/chirps", apiCfg.createChirpHandler)
 	mux.HandleFunc("GET /admin/metrics", apiCfg.getMetricsHandler)
 	mux.HandleFunc("POST /admin/reset-metrics", apiCfg.resetMetricsHandler)
-	mux.HandleFunc("POST /admin/reset", apiCfg.resetHandler)
+	mux.HandleFunc("POST /admin/reset", apiCfg.resetUsersHandler)
 
 	port := "8080"
 	server := http.Server{

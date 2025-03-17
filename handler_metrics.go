@@ -12,10 +12,6 @@ const metricsHTML = `<html>
   </body>
 </html>`
 
-func (cfg *apiConfig) isDev() bool {
-	return cfg.platform == "dev"
-}
-
 func (cfg *apiConfig) middlewareMetricsInc(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cfg.fileServerHits.Add(1)
@@ -24,8 +20,8 @@ func (cfg *apiConfig) middlewareMetricsInc(next http.Handler) http.Handler {
 }
 
 func (cfg *apiConfig) getMetricsHandler(w http.ResponseWriter, r *http.Request) {
-	if !cfg.isDev() {
-		respondWithError(w, http.StatusForbidden, "Forbidden: metrics only available in dev environment")
+	if cfg.platform != "dev" {
+		respondWithError(w, http.StatusForbidden, "Forbidden")
 		return
 	}
 
@@ -33,14 +29,4 @@ func (cfg *apiConfig) getMetricsHandler(w http.ResponseWriter, r *http.Request) 
 	hitCount := cfg.fileServerHits.Load()
 	message := fmt.Sprintf(metricsHTML, hitCount)
 	w.Write([]byte(message))
-}
-
-func (cfg *apiConfig) resetMetricsHandler(w http.ResponseWriter, r *http.Request) {
-	if !cfg.isDev() {
-		respondWithError(w, http.StatusForbidden, "Forbidden: reset metrics only available in dev environment")
-		return
-	}
-
-	cfg.fileServerHits.Store(int32(0))
-	respondWithJSON(w, http.StatusOK, map[string]string{"message": "Hit count successfully reset"})
 }
