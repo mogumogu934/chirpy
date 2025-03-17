@@ -20,9 +20,9 @@ type apiConfig struct {
 	fileServerHits atomic.Int32
 }
 
-type parameters struct {
+type userReq struct {
 	Email    string `json:"email"`
-	Password string `json:"hashed_password"`
+	Password string `json:"password"`
 }
 
 type User struct {
@@ -31,6 +31,13 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	Email     string    `json:"email"`
 	Password  string    `json:"hashed_password"`
+}
+
+type cleanUser struct {
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Email     string    `json:"email"`
 }
 
 type Chirp struct {

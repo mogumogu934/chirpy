@@ -21,13 +21,37 @@ POST http://localhost:8080/api/login
   "password": "0123456789"
 }
 
+### Test login with incorrect password
+POST http://localhost:8080/api/login
+
+{
+  "email": "test@yahoo.com",
+  "password": "0123"
+}
+
+### Test login with empty password
+POST http://localhost:8080/api/login
+
+{
+  "email": "test@yahoo.com",
+  "password": ""
+}
+
+### Test login with incorrect email
+POST http://localhost:8080/api/login
+
+{
+  "email": "testincorrect@yahoo.com",
+  "password": "0123456789"
+}
+
 ### Create chirp
 POST http://localhost:8080/api/chirps
 Content-Type: application/json
 
 {
   "body": "This is a test chirp",
-  "user_id": "6c83e029-e8d9-4b67-b8c8-d7fcacb39a72"
+  "user_id": "5886f02a-1289-4f09-87d4-2c0ba1256c91"
 }
 
 ### Create chirp (too long)
@@ -36,7 +60,7 @@ Content-Type: application/json
 
 {
   "body": "This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp. This is a test chirp.",
-  "user_id": "6c83e029-e8d9-4b67-b8c8-d7fcacb39a72"
+  "user_id": "5886f02a-1289-4f09-87d4-2c0ba1256c91"
 }
 
 ### Test word filter
@@ -45,14 +69,14 @@ Content-Type: application/json
 
 {
   "body": "This is a kerfuffle opinion I need to share with the sharbert world.",
-  "user_id": "6c83e029-e8d9-4b67-b8c8-d7fcacb39a72"
+  "user_id": "5886f02a-1289-4f09-87d4-2c0ba1256c91"
 }
 
 ### Test get chirps
 GET http://localhost:8080/api/chirps
 
 ### Test get chirp by ID
-GET http://localhost:8080/api/chirps/d624081b-6b98-4758-af6f-0ef63511590c
+GET http://localhost:8080/api/chirps/85de03d9-d86f-4397-a682-c0eac3d70d9f
 
 ### Test reset
 POST http://localhost:8080/admin/reset
