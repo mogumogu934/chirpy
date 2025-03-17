@@ -10,12 +10,12 @@ import (
 	"github.com/mogumogu934/chirpy/internal/database"
 )
 
-func cleanUserResp(user database.User) cleanUser {
+func cleanUserResp(dbUser database.User) cleanUser {
 	return cleanUser{
-		ID:        user.ID,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-		Email:     user.Email,
+		ID:        dbUser.ID,
+		CreatedAt: dbUser.CreatedAt,
+		UpdatedAt: dbUser.UpdatedAt,
+		Email:     dbUser.Email,
 	}
 }
 
@@ -39,7 +39,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		HashedPassword: hashedPassword,
 	}
 
-	user, err := cfg.db.CreateUser(r.Context(), userParams)
+	dbUser, err := cfg.db.CreateUser(r.Context(), userParams)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			if pqErr.Code == "23505" {
@@ -52,7 +52,7 @@ func (cfg *apiConfig) createUserHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	respondWithJSON(w, http.StatusCreated, cleanUserResp(user))
+	respondWithJSON(w, http.StatusCreated, cleanUserResp(dbUser))
 }
 
 func (cfg *apiConfig) resetHandler(w http.ResponseWriter, r *http.Request) {
