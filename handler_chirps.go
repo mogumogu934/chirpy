@@ -12,10 +12,21 @@ import (
 )
 
 func (cfg *apiConfig) getChirpsHandler(w http.ResponseWriter, r *http.Request) {
-	chirps, err := cfg.db.GetChirps(r.Context())
+	dBchirps, err := cfg.db.GetChirps(r.Context())
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error getting chirps: %v", err))
 		return
+	}
+
+	chirps := []Chirp{}
+	for _, chirp := range dBchirps {
+		chirps = append(chirps, Chirp{
+			ID:        chirp.ID,
+			CreatedAt: chirp.CreatedAt,
+			UpdatedAt: chirp.UpdatedAt,
+			Body:      chirp.Body,
+			UserID:    chirp.UserID,
+		})
 	}
 
 	respondWithJSON(w, http.StatusOK, chirps)
@@ -28,7 +39,7 @@ func (cfg *apiConfig) getChirpByIDHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	chirp, err := cfg.db.GetChirpByID(r.Context(), chirpID)
+	dbChirp, err := cfg.db.GetChirpByID(r.Context(), chirpID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			respondWithError(w, http.StatusNotFound, fmt.Sprintf("chirp with chirpID %v does not exist", chirpID))
@@ -36,6 +47,14 @@ func (cfg *apiConfig) getChirpByIDHandler(w http.ResponseWriter, r *http.Request
 		}
 		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error getting chirp by chirpID: %v", err))
 		return
+	}
+
+	chirp := Chirp{
+		ID:        dbChirp.ID,
+		CreatedAt: dbChirp.CreatedAt,
+		UpdatedAt: dbChirp.UpdatedAt,
+		Body:      dbChirp.Body,
+		UserID:    dbChirp.UserID,
 	}
 
 	respondWithJSON(w, http.StatusOK, chirp)
@@ -83,19 +102,19 @@ func (cfg *apiConfig) createChirpHandler(w http.ResponseWriter, r *http.Request)
 		UserID: params.UserID,
 	}
 
-	chirp, err := cfg.db.CreateChirp(r.Context(), chirpParams)
+	dbChirp, err := cfg.db.CreateChirp(r.Context(), chirpParams)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error creating chirp: %v", err))
 		return
 	}
 
-	newChirp := Chirp{
-		ID:        chirp.ID,
-		CreatedAt: chirp.CreatedAt,
-		UpdatedAt: chirp.UpdatedAt,
-		Body:      chirp.Body,
-		UserID:    chirp.UserID,
+	chirp := Chirp{
+		ID:        dbChirp.ID,
+		CreatedAt: dbChirp.CreatedAt,
+		UpdatedAt: dbChirp.UpdatedAt,
+		Body:      dbChirp.Body,
+		UserID:    dbChirp.UserID,
 	}
 
-	respondWithJSON(w, http.StatusCreated, newChirp)
+	respondWithJSON(w, http.StatusCreated, chirp)
 }
