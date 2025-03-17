@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"net/http"
 	"testing"
 	"time"
 
@@ -8,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestJWTCreationAndValidation(t *testing.T) {
+func TestJWTCreationAndValidationSuccess(t *testing.T) {
 	userID := uuid.New()
 	secret := "test-secret"
 	expiresIn := time.Hour
@@ -22,7 +23,7 @@ func TestJWTCreationAndValidation(t *testing.T) {
 	assert.Equal(t, userID, extractedID)
 }
 
-func TestExpiredJWT(t *testing.T) {
+func TestJWTValidationFailureWithExpiredJWT(t *testing.T) {
 	userID := uuid.New()
 	secret := "test-secret"
 	expiresIn := -time.Hour
@@ -34,7 +35,7 @@ func TestExpiredJWT(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestWrongSecretJWT(t *testing.T) {
+func TestJWTValidationFailureWithWrongSecret(t *testing.T) {
 	userID := uuid.New()
 	correctSecret := "test-correct-secret"
 	wrongSecret := "test-wrong-secret"
@@ -45,4 +46,34 @@ func TestWrongSecretJWT(t *testing.T) {
 
 	_, err = ValidateJWT(token, wrongSecret)
 	assert.Error(t, err)
+}
+
+func TestGetBearerTokenSuccess(t *testing.T) {
+	headers := http.Header{}
+	headers.Add("Authorization", "Bearer test_token")
+	token, err := GetBearerToken(headers)
+	assert.Equal(t, "test_token", token)
+	assert.NoError(t, err)
+}
+
+func TestGetBearerTokenFailureWithMissingHeader(t *testing.T) {
+	headers := http.Header{}
+	headers.Add("Content-Type", "application/json")
+	_, err := GetBearerToken(headers)
+	assert.Error(t, err)
+}
+
+func TestGetBearerTokenFailureWithInvalidHeader(t *testing.T) {
+	headers := http.Header{}
+	headers.Add("Authorization", "This is my test_token")
+	_, err := GetBearerToken(headers)
+	assert.Error(t, err)
+}
+
+func TestGetBearerTokenSuccessWithExtraWhitespace(t *testing.T) {
+	headers := http.Header{}
+	headers.Add("Authorization", "Bearer         test_token")
+	token, err := GetBearerToken(headers)
+	assert.Equal(t, "test_token", token)
+	assert.NoError(t, err)
 }
