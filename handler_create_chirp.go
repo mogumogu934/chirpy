@@ -44,9 +44,8 @@ func (cfg *apiConfig) createChirpHandler(w http.ResponseWriter, r *http.Request)
 		case errors.Is(err, jwt.ErrTokenExpired):
 			respondWithError(w, http.StatusUnauthorized, "Token has expired")
 		case errors.Is(err, jwt.ErrTokenSignatureInvalid):
-			respondWithError(w, http.StatusUnauthorized, "Invalid token")
+			respondWithError(w, http.StatusUnauthorized, "Invalid token format - access token required")
 		default:
-			log.Printf("error validating JWT: %v", err)
 			respondWithError(w, http.StatusUnauthorized, "Authentication failed")
 		}
 		return
