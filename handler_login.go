@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/mogumogu934/chirpy/internal/auth"
+	"github.com/mogumogu934/chirpy/internal/database"
 )
 
 func (cfg *apiConfig) loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,20 +61,40 @@ func (cfg *apiConfig) loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	refTokenString, err := auth.MakeRefreshToken()
+	if err != nil {
+		log.Printf("error making refresh token string: %v", err)
+		respondWithError(w, http.StatusInternalServerError, "Error logging in")
+		return
+	}
+
+	refToken, err := cfg.db.CreateRefreshToken(r.Context(), database.CreateRefreshTokenParams{
+		Token:  refTokenString,
+		UserID: dbUser.ID,
+	})
+
+	if err != nil {
+		log.Printf("error making refresh token: %v", err)
+		respondWithError(w, http.StatusInternalServerError, "Error logging in")
+		return
+	}
+
 	type loginUserResp struct {
-		ID        uuid.UUID `json:"id"`
-		CreatedAt time.Time `json:"created_at"`
-		UpdatedAt time.Time `json:"updated_at"`
-		Email     string    `json:"email"`
-		Token     string    `json:"token"`
+		ID           uuid.UUID `json:"id"`
+		CreatedAt    time.Time `json:"created_at"`
+		UpdatedAt    time.Time `json:"updated_at"`
+		Email        string    `json:"email"`
+		Token        string    `json:"token"`
+		RefreshToken string    `json:"refresh_token"`
 	}
 
 	user := loginUserResp{
-		ID:        dbUser.ID,
-		CreatedAt: dbUser.CreatedAt,
-		UpdatedAt: dbUser.UpdatedAt,
-		Email:     dbUser.Email,
-		Token:     token,
+		ID:           dbUser.ID,
+		CreatedAt:    dbUser.CreatedAt,
+		UpdatedAt:    dbUser.UpdatedAt,
+		Email:        dbUser.Email,
+		Token:        token,
+		RefreshToken: refToken.Token,
 	}
 
 	respondWithJSON(w, http.StatusOK, user)

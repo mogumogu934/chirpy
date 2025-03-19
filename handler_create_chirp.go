@@ -33,6 +33,7 @@ func filterMsg(msg string) string {
 func (cfg *apiConfig) createChirpHandler(w http.ResponseWriter, r *http.Request) {
 	token, err := auth.GetBearerToken(r.Header)
 	if err != nil {
+		log.Printf("error getting token string: %v", err)
 		respondWithError(w, http.StatusUnauthorized, "Missing or invalid token")
 		return
 	}
