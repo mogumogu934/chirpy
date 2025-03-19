@@ -21,6 +21,7 @@ func (cfg *apiConfig) upgradeUserHandler(w http.ResponseWriter, r *http.Request)
 
 	if key != cfg.polkaKey {
 		respondWithError(w, http.StatusUnauthorized, "Invalid key")
+		return
 	}
 
 	type parameters struct {
