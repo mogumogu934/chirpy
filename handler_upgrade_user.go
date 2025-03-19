@@ -8,9 +8,21 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/mogumogu934/chirpy/internal/auth"
 )
 
 func (cfg *apiConfig) upgradeUserHandler(w http.ResponseWriter, r *http.Request) {
+	key, err := auth.GetAPIKey(r.Header)
+	if err != nil {
+		log.Printf("error getting key string: %v", err)
+		respondWithError(w, http.StatusUnauthorized, "Missing or invalid key")
+		return
+	}
+
+	if key != cfg.polkaKey {
+		respondWithError(w, http.StatusUnauthorized, "Invalid key")
+	}
+
 	type parameters struct {
 		Event string `json:"event"`
 		Data  struct {
@@ -20,7 +32,7 @@ func (cfg *apiConfig) upgradeUserHandler(w http.ResponseWriter, r *http.Request)
 
 	decoder := json.NewDecoder(r.Body)
 	params := parameters{}
-	err := decoder.Decode(&params)
+	err = decoder.Decode(&params)
 	if err != nil {
 		log.Printf("error decoding body: %v", err)
 		respondWithError(w, http.StatusInternalServerError, "Error upgrading user")
